@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(findstr langchain)",
+      "Bash(python -c \"import langchain_ollama; print(''Import exitoso'')\")",
+      "Bash(C:Userslionard.2185115PycharmProjectsrepos-clonadoslangchain-course.venvScriptspip.exe install langchain-ollama)",
+      "Bash(rm -rf .venv)",
+      "Bash(python main.py)",
+      "Bash(pip install python-dotenv)",
+      "Bash(python -m venv venv_curso)",
+      "Bash(venv_cursoScriptsactivate)",
+      "Bash(python -m pip install --upgrade pip)",
+      "Bash(./venv_curso/Scripts/pip.exe install --upgrade pip)",
+      "Bash(./venv_curso/Scripts/pip.exe install langchain-core langchain-ollama python-dotenv)",
+      "Bash(./venv_curso/Scripts/python.exe main.py)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -12,7 +12,12 @@
       "Bash(python -m pip install --upgrade pip)",
       "Bash(./venv_curso/Scripts/pip.exe install --upgrade pip)",
       "Bash(./venv_curso/Scripts/pip.exe install langchain-core langchain-ollama python-dotenv)",
-      "Bash(./venv_curso/Scripts/python.exe main.py)"
+      "Bash(./venv_curso/Scripts/python.exe main.py)",
+      "Bash(systeminfo)",
+      "Bash(findstr \"Total Physical Memory\")",
+      "Bash(wmic cpu get name)",
+      "Bash(findstr \"Processor\")",
+      "Bash(findstr /C:\"Processor\")"
     ],
     "deny": [],
     "ask": []

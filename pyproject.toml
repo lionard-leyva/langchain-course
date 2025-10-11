@@ -1,11 +1,14 @@
 [project]
 name = "langchain-course"
 version = "0.1.0"
-description = "LangChain course - Learning to work with Ollama local models"
+description = "LangChain course - Learning to work with Claude and search agents"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "langchain>=0.3.27",
+    "langchain-anthropic>=0.3.22",
+    "langchain-community>=0.3.31",
     "langchain-core>=0.3.78",
-    "langchain-ollama>=0.3.10",
     "python-dotenv>=1.1.1",
+    "duckduckgo-search>=6.4.0",
 ]

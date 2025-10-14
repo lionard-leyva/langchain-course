@@ -2,11 +2,10 @@ import os
 import ssl
 import urllib3
 from dotenv import load_dotenv
-from langchain_core.prompts import PromptTemplate
 
 load_dotenv()
 
-# Desactivar SSL verification para proxy Inditex
+# Desactivar SSL verification
 ssl._create_default_https_context = ssl._create_unverified_context
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 os.environ['CURL_CA_BUNDLE'] = ''
@@ -35,6 +34,7 @@ def patched_async_client_init(self, *args, **kwargs):
     original_async_client_init(self, *args, **kwargs)
 httpx.AsyncClient.__init__ = patched_async_client_init
 
+from langchain import hub
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain_anthropic import ChatAnthropic
 from langchain_tavily import TavilySearch
@@ -46,28 +46,8 @@ llm = ChatAnthropic(
     base_url=os.getenv("ANTHROPIC_BASE_URL"),
     temperature=0.1
 )
-# Prompt ReAct manual (sin hub.pull)
-react_prompt = PromptTemplate.from_template("""
-Answer the following questions as best you can. You have access to the following tools:
 
-{tools}
-
-Use the following format:
-
-Question: the input question you must answer
-Thought: you should always think about what to do
-Action: the action to take, should be one of [{tool_names}]
-Action Input: the input to the action
-Observation: the result of the action
-... (this Thought/Action/Action Input/Observation can repeat N times)
-Thought: I now know the final answer
-Final Answer: the final answer to the original input question
-
-Begin!
-
-Question: {input}
-Thought: {agent_scratchpad}
-""")
+react_prompt = hub.pull("hwchase17/react")
 agent =create_react_agent(llm, tools, react_prompt)
 agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 

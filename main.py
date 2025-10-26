@@ -2,8 +2,18 @@ import os
 import ssl
 import urllib3
 from dotenv import load_dotenv
+from langchain import hub
+from langchain.agents import AgentExecutor, create_react_agent
+from langchain_anthropic import ChatAnthropic
+from langchain_tavily import TavilySearch
 
-load_dotenv()
+from langchain_core.output_parsers.pydantic import PydanticOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnableLambda
+
+from prompt import REACT_PROMPT_WITH_FORMAT_INTRUCTIONS
+from schemas import AgentResponse
+
 
 # Desactivar SSL verification
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -34,11 +44,9 @@ def patched_async_client_init(self, *args, **kwargs):
     original_async_client_init(self, *args, **kwargs)
 httpx.AsyncClient.__init__ = patched_async_client_init
 
-from langchain import hub
-from langchain.agents import AgentExecutor, create_react_agent
-from langchain_anthropic import ChatAnthropic
-from langchain_tavily import TavilySearch
 
+
+load_dotenv()
 tools = [TavilySearch()]
 llm = ChatAnthropic(
     model="bedrock/claude-sonnet-4.5",
@@ -46,9 +54,20 @@ llm = ChatAnthropic(
     base_url=os.getenv("ANTHROPIC_BASE_URL"),
     temperature=0.1
 )
-
 react_prompt = hub.pull("hwchase17/react")
-agent =create_react_agent(llm, tools, react_prompt)
+
+output_parser = PydanticOutputParser(pydantic_object=AgentResponse)
+react_prompt_with_format_instructions = PromptTemplate(
+    template=REACT_PROMPT_WITH_FORMAT_INTRUCTIONS,
+    input_variables=["input", "agent_scratchpad", "tools_names"]
+).partial(format_instructions=output_parser.get_format_instructions())
+
+
+agent =create_react_agent(
+    llm=llm,
+    tools=tools,
+    prompt= react_prompt_with_format_instructions
+)
 agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
 
